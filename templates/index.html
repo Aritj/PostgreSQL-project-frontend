@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% if login == True %}
+    <div class="d-flex flex-column min-vh-50 justify-content-center align-items-center">
+        <form method="post" action="/login">
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input name="username" type="username" class="form-control" id="username" aria-describedby="emailHelp">
+            <div id="emailHelp" class="form-text">We'll never share your email with anyone else.</div>
+            </div>
+
+            <fieldset disabled>
+            <div class="mb-3">
+                <label for="exampleInputPassword1" class="form-label" >Password</label>
+                <input type="password" class="form-control" id="exampleInputPassword1" placeholder="N/A">
+            </div>
+            </fieldset>
+            <button type="submit" class="btn btn-primary">Login</button>
+        </form>
+    </div>
+{% else %}
+
+<div id="outPopUp">
+    <h1 class="display-6">Welcome to <b>AAAE</b> inc.</h1>
+</div>
+{% endif %}
+{% endblock %}
