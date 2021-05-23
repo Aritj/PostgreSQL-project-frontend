@@ -57,10 +57,16 @@ class Employee(db.Model):
 	employment_date = db.Column(db.Date, default = datetime.datetime.now)
 	ptal = db.Column(db.String(9), db.ForeignKey('person.ptal'), nullable = False)
 
-class AccountType(db.Model):
+class Accounttype(db.Model):
 	account_type = db.Column(db.Integer, primary_key = True)
 	name = db.Column(db.String(30), nullable = False)
 	rent = db.Column(db.Float, nullable = False)
+	def __init__(self, account_type, name, rent):
+		self.account_type = account_type
+		self.name = name
+		self.rent = rent
+	def __repr__(self):
+		return self.name
 
 class Account(db.Model):
 	account_id = db.Column(db.Integer, primary_key = True)
@@ -146,7 +152,7 @@ def login_route():
 					zip_info = db.session.query(Zip.city).filter(Zip.zip_code == person_info[7]).all()[0][0]
 					return render_template('logged_in.html', name = str(credentials), customer = customer_info, person = person_info, zip = zip_info)
 				else:
-					return redirect(url_for('index'))
+					return redirect(url_for('login_route'))
 		except (Exception) as e:
 			print(e)
 			return redirect(url_for('index'))
@@ -208,6 +214,12 @@ def person_info_route():
 			Person.street_name, Person.street_number, Person.email, Person.phone_number, Person.zip_code).all()
 	return render_template('table_person.html', content = person_info)
 
+@app.route('/accounttype_info', methods = ['GET'])
+def accounttype_info_route():
+	#accounttype_info = db.session.query(AccountType.name, AccountType.rent).all()
+	accounttype_info = db.session.query(Accounttype.account_type, Accounttype.name, Accounttype.rent).all()
+	return render_template('table_accounttype.html', content = accounttype_info)
+
 @app.route('/post_zip', methods = ['POST'])
 def post_zip_route():
 	try:
@@ -221,4 +233,4 @@ def post_zip_route():
 
 # Set HTTP port
 if __name__ == '__main__':
-	app.run(host='0.0.0.0', port=5000, debug=True)
+	app.run(host='0.0.0.0', port=80, debug=True)

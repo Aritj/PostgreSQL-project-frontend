@@ -7,17 +7,17 @@
             <table class="table">
                 <thead>
                     <tr class="text-white">
-                        <th scope="col"><h1 class="display-7 text-white">customer_id</h1></th>
-                        <th scope="col"><h1 class="display-7 text-white">creation_date</h1></th>
-                        <th scope="col"><h1 class="display-7 text-white">ptal</h1></th>
+                        <th scope="col"><h1 class="display-7">account_type</h1></th>
+                        <th scope="col"><h1 class="display-7">name</h1></th>
+                        <th scope="col"><h1 class="display-7">rent</h1></th>
                     </tr>
                 </thead>
                 {% for i in content %}
                 <tbody>
                     <tr class="text-white">
-                        <th scope="row"><h1 class="display-6 text-white">{{i[0]}}</h1></th>
-                        <td><h1 class="display-6 text-white">{{i[1]}}</h1></td>
-                        <td><h1 class="display-6 text-white">{{i[2]}}</h1></td>
+                        <th scope="row"><h1 class="display-6">{{i[0]}}</h1></th>
+                        <td><h1 class="display-6">{{i[1]}}</h1></td>
+                        <td><h1 class="display-6">{{i[2]}}</h1></td>
                     </tr>
                 </tbody>
                 {% endfor %}
