@@ -1,26 +1,22 @@
-{% extends "base.html" %}
+{% extends "base3.html" %}
 
 {% block content %}
-<div class="container">
-    <div class="table-wrapper-scroll-y my-custom-scrollbar">
-        <div class="table table-bordered table-striped mb-0">
-                <table class="table">
-                    <thead>
-                        <tr class="text-white">
-                            <th scope="col"><h1 class="display-7 text-white"><b>Zip</b></h1></th>
-                            <th scope="col"><h1 class="display-7 text-white"><b>City</b></h1></th>
-                        </tr>
-                    </thead>
-                    {% for i in content %}
-                    <tbody>
-                        <tr class="text-white">
-                            <th scope="row"><h1 class="display-6 text-white">{{i[0]}}</h1></th>
-                            <td><h1 class="display-6 text-white">{{i[1]}}</h1></td>
-                        </tr>
-                    </tbody>
-                    {% endfor %}
-                </table>
-        </div>
-    </div>
+<div class="d-flex">
+    <table class="table table-bordered">
+        <thead>
+            <tr class="text">
+                <th scope="col">Zip</th>
+                <th scope="col">City</th>
+            </tr>
+        </thead>
+        {% for i in content %}
+        <tbody>
+            <tr class="text">
+                <th scope="row">{{i[0]}}</th>
+                <td>{{i[1]}}</td>
+            </tr>
+        </tbody>
+        {% endfor %}
+    </table>
 </div>
 {% endblock %}

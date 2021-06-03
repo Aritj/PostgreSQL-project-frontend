@@ -59,14 +59,14 @@ class Employee(db.Model):
 
 class Accounttype(db.Model):
 	account_type = db.Column(db.Integer, primary_key = True)
-	name = db.Column(db.String(30), nullable = False)
+	type_name = db.Column(db.String(30), nullable = False)
 	rent = db.Column(db.Float, nullable = False)
-	def __init__(self, account_type, name, rent):
+	def __init__(self, account_type, type_name, rent):
 		self.account_type = account_type
-		self.name = name
+		self.type_name = type_name
 		self.rent = rent
 	def __repr__(self):
-		return self.name
+		return self.type_name
 
 class Account(db.Model):
 	account_id = db.Column(db.Integer, primary_key = True)
@@ -86,11 +86,13 @@ class Bank(db.Model):
 	equity = db.Column(db.Integer, db.ForeignKey('Account.account_id'), nullable = False)
 	balance = db.Column(db.Integer, db.ForeignKey('Account.account_id'), nullable = False)
 
-class Transaction(db.Model):
+class Transactions(db.Model):
 	transaction_id = db.Column(db.Integer, primary_key = True)
-	balance = db.Column(db.Float, nullable = False)
+	amount = db.Column(db.Integer, nullable = False)
 	creation_date = db.Column(db.Date, default = datetime.datetime.now)
 	account = db.Column(db.Integer, db.ForeignKey('Account.account_id'), nullable = False)
+	balance = db.Column(db.Float, nullable = False)
+
 
 class Relation(db.Model):
 	relation_type = db.Column(db.String(30), primary_key = True)
@@ -104,11 +106,16 @@ class Cashdraft(db.Model):
 	account_id = db.Column(db.Integer, db.ForeignKey('Account.account_id'), nullable = False)
 	employee_id = db.Column(db.Integer, db.ForeignKey('Employee.employee_id'), nullable = False)
 
-class Credentials(db.Model):
+class Customerlogin(db.Model):
 	username = db.Column(db.String(50), primary_key = True)
-	password = db.Column(db.String(50), nullable = False)
-	access_level = db.Column(db.String(20), nullable = False)
 	customer_id = db.Column(db.Integer, db.ForeignKey('Customer.customer_id'), nullable = False)
+	def __init__(self, username):
+		self.username = username
+	def __repr__(self):
+		return self.username
+
+class Employeelogin(db.Model):
+	username = db.Column(db.String(50), primary_key = True)
 	employee_id = db.Column(db.Integer, db.ForeignKey('Employee.employee_id'), nullable = False)
 	def __init__(self, username):
 		self.username = username
@@ -119,9 +126,9 @@ class Credentials(db.Model):
 def index():
 	return render_template('index.html', login = False)
 
-@app.route('/about_us', methods = ['GET'])
-def about_us_route():
-	return render_template('about_us.html')
+@app.route('/developers', methods = ['GET'])
+def developers_route():
+	return render_template('developers.html')
 
 @app.route('/zip_info', methods = ['GET'])
 def zip_info_route():
@@ -130,29 +137,30 @@ def zip_info_route():
 
 @app.route('/bank', methods = ['GET'])
 def bank_route():
-	bank_info = Bank.query.all()
+	bank_info = db.session.query(Bank.vtal, Bank.name, Bank.balance, Bank.equity, Bank.email, Bank.phone_number, Bank.street_name, Bank.street_number, Bank.zip_code).all()
 	return render_template('table_bank.html', content = bank_info)
 
 @app.route('/login', methods = ['GET', 'POST'])
 def login_route():
 	if request.method == 'POST':
 		try:
-			credentials = Credentials(request.form['username'])
-			logins = db.session.query(Credentials.username, Credentials.password).all()
-			for i in logins:
-				if str(credentials) == str(i[0]):
-					customer_nr = db.session.query(Credentials.customer_id).filter(Credentials.username == i[0]).first()[0]
-					customer_info = db.session.query(Customer.customer_id, Customer.creation_date, Customer.ptal).filter(Customer.customer_id == customer_nr).all()[0]
+			username = str(Customerlogin(request.form['username']))
+			logins = db.session.query(Customerlogin.username, Customerlogin.customer_id).all()
+			for login in logins:
+				if username == str(login[0]):
+					customer_id = int(login[1])
+					print(customer_id)
+					customer_info = db.session.query(Customer.customer_id, Customer.creation_date, Customer.ptal).filter(Customer.customer_id == customer_id).all()[0]
 					ptal = customer_info[2]
 					person_info = db.session.\
 					query(Person.first_name, Person.middle_name, Person.last_name,\
 						Person.street_name, Person.street_number, Person.email, Person.phone_number,\
-						Person.zip_code).filter(Customer.customer_id == customer_nr).all()[0]
+						Person.zip_code).filter(Person.ptal == ptal).all()[0]
 					print(person_info)
 					zip_info = db.session.query(Zip.city).filter(Zip.zip_code == person_info[7]).all()[0][0]
-					return render_template('logged_in.html', name = str(credentials), customer = customer_info, person = person_info, zip = zip_info)
-				else:
-					return redirect(url_for('login_route'))
+					print(zip_info)
+					return render_template('logged_in.html', name = username, customer = customer_info, person = person_info, zip = zip_info)
+			return redirect(url_for('login_route'))
 		except (Exception) as e:
 			print(e)
 			return redirect(url_for('index'))
@@ -164,7 +172,7 @@ def customer_route(ptal):
 	try:
 		person_info = db.session.query(Person.first_name, Person.middle_name, Person.last_name,\
 			Person.street_name, Person.street_number, Person.email, Person.phone_number, Person.zip_code)\
-				.filter(Customer.ptal == ptal).all()[0]
+				.filter(Person.ptal == ptal).all()[0]
 		customer_info = db.session.query(Customer.customer_id, Customer.creation_date, Customer.ptal).filter(Customer.ptal == ptal).all()[0]
 		zip_info = db.session.query(Zip.city).filter(Zip.zip_code == person_info[7]).all()[0][0]
 		return render_template('customer.html', person = person_info, customer = customer_info, zip = zip_info)
@@ -177,10 +185,13 @@ def account_route(ptal):
 	try:
 		person_info = db.session.query(Person.first_name, Person.middle_name, Person.last_name,\
 			Person.street_name, Person.street_number, Person.email, Person.phone_number, Person.zip_code)\
-				.filter(Customer.ptal == ptal).all()[0]
+				.filter(Person.ptal == ptal).all()[0]
 		customer_info = db.session.query(Customer.customer_id, Customer.creation_date, Customer.ptal).filter(Customer.ptal == ptal).all()[0]
 		zip_info = db.session.query(Zip.city).filter(Zip.zip_code == person_info[7]).all()[0][0]
-		return render_template('accounts.html', person = person_info, customer = customer_info, zip = zip_info)
+		account_info = db.session.query(Account.account_id, Account.balance, Account.account_type, Account.creation_date, Account.customer_id).filter(Account.customer_id == customer_info[0]).all()
+		accounttype = account_info[0][2]
+		accounttype_info = db.session.query(Accounttype.type_name, Accounttype.account_type).filter(Accounttype.account_type == accounttype).all()
+		return render_template('accounts.html', person = person_info, customer = customer_info, zip = zip_info, account = account_info, accounttype = accounttype_info)
 	except (Exception) as e:
 		print(e)
 		return redirect(url_for('index'))
@@ -190,7 +201,7 @@ def transactions_route(ptal):
 	try:
 		person_info = db.session.query(Person.first_name, Person.middle_name, Person.last_name,\
 			Person.street_name, Person.street_number, Person.email, Person.phone_number, Person.zip_code)\
-				.filter(Customer.ptal == ptal).all()[0]
+				.filter(Person.ptal == ptal).all()[0]
 		customer_info = db.session.query(Customer.customer_id, Customer.creation_date, Customer.ptal).filter(Customer.ptal == ptal).all()[0]
 		zip_info = db.session.query(Zip.city).filter(Zip.zip_code == person_info[7]).all()[0][0]
 		return render_template('transaction.html', person = person_info, customer = customer_info, zip = zip_info)
@@ -198,10 +209,10 @@ def transactions_route(ptal):
 		print(e)
 		return redirect(url_for('index'))
 
-@app.route('/login_info', methods = ['GET'])
+@app.route('/customerlogin_info', methods = ['GET'])
 def login_info_route():
-	login_info = db.session.query(Credentials.username, Credentials.password, Credentials.access_level, Credentials.customer_id, Credentials.employee_id).all()
-	return render_template('table_credentials.html', content = login_info)
+	login_info = db.session.query(Customerlogin.username, Customerlogin.customer_id).all()
+	return render_template('table_customerlogin.html', content = login_info)
 
 @app.route('/customer_info', methods = ['GET'])
 def customer_info_route():

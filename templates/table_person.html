@@ -1,33 +1,33 @@
-{% extends "base.html" %}
+{% extends "base3.html" %}
 
 {% block content %}
-<div class="d-flex flex-column justify-content-center align-items-center">
-        <table class="table">
+<div class="d-flex">
+    <table class="table table-bordered">
             <thead>
-                <tr class="text-white">
-                    <th scope="col"><h1 class="display-7 text-white">ptal</h1></th>
-                    <th scope="col"><h1 class="display-7 text-white">first_name</h1></th>
-                    <th scope="col"><h1 class="display-7 text-white">middle_name</h1></th>
-                    <th scope="col"><h1 class="display-7 text-white">last_name</h1></th>
-                    <th scope="col"><h1 class="display-7 text-white">street_name</h1></th>
-                    <th scope="col"><h1 class="display-7 text-white">street_number</h1></th>
-                    <th scope="col"><h1 class="display-7 text-white">email</h1></th>
-                    <th scope="col"><h1 class="display-7 text-white">phone_number</h1></th>
-                    <th scope="col"><h1 class="display-7 text-white">zip_code</h1></th>
+                <tr class="text">
+                    <th scope="col">ptal</th>
+                    <th scope="col">first_name</th>
+                    <th scope="col">middle_name</th>
+                    <th scope="col">last_name</th>
+                    <th scope="col">street_name</th>
+                    <th scope="col">street_number</th>
+                    <th scope="col">email</th>
+                    <th scope="col">phone_number</th>
+                    <th scope="col">zip_code</th>
                 </tr>
             </thead>
             {% for i in content %}
             <tbody>
-                <tr class="text-white">
-                    <th scope="row"><h1 class="display-6 text-white">{{i[0]}}</h1></th>
-                    <td><h1 class="display-6 text-white">{{i[1]}}</h1></td>
-                    <td><h1 class="display-6 text-white">{{i[2]}}</h1></td>
-                    <td><h1 class="display-6 text-white">{{i[3]}}</h1></td>
-                    <td><h1 class="display-6 text-white">{{i[4]}}</h1></td>
-                    <td><h1 class="display-6 text-white">{{i[5]}}</h1></td>
-                    <td><h1 class="display-6 text-white">{{i[6]}}</h1></td>
-                    <td><h1 class="display-6 text-white">{{i[7]}}</h1></td>
-                    <td><h1 class="display-6">{{i[8]}}</h1></td>
+                <tr class="text">
+                    <th scope="row">{{i[0]}}</th>
+                    <td>{{i[1]}}</td>
+                    <td>{{i[2]}}</td>
+                    <td>{{i[3]}}</td>
+                    <td>{{i[4]}}</td>
+                    <td>{{i[5]}}</td>
+                    <td>{{i[6]}}</td>
+                    <td>{{i[7]}}</td>
+                    <td>{{i[8]}}</td>
                 </tr>
             </tbody>
             {% endfor %}

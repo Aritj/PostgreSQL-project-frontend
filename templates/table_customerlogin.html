@@ -4,22 +4,19 @@
 <div class="d-flex">
     <table class="table table-bordered">
         <thead>
-            <tr class="text-dark">
-                <th scope="col">account_type</th>
-                <th scope="col">name</th>
-                <th scope="col">rent</th>
+            <tr class="text">
+                <th scope="col">Login</th>
+                <th scope="col">Customer id</th>
             </tr>
         </thead>
         {% for i in content %}
         <tbody>
-            <tr class="text-dark">
+            <tr>
                 <th scope="row">{{i[0]}}</th>
                 <td>{{i[1]}}</td>
-                <td>{{i[2]}}</td>
             </tr>
         </tbody>
         {% endfor %}
     </table>
 </div>
-{{accounttype}}
 {% endblock %}
